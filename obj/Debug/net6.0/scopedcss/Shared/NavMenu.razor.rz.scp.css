@@ -1,0 +1,100 @@
+.game-console[b-i65gcuqq6n] {
+    background-color: #2a2a2a;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.console-screen[b-i65gcuqq6n] {
+    background-color: var(--dark-bg);
+    border-radius: 10px;
+    padding: 20px;
+    border: 4px solid #444;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.console-header[b-i65gcuqq6n] {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.console-title[b-i65gcuqq6n] {
+    color: var(--neon-blue);
+    font-size: 1.5rem;
+    text-shadow: 0 0 10px var(--neon-blue);
+    margin: 0;
+}
+
+.console-menu[b-i65gcuqq6n] {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.menu-item[b-i65gcuqq6n] {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.menu-item:hover[b-i65gcuqq6n], .menu-item.active[b-i65gcuqq6n] {
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px var(--neon-pink);
+    transform: translateY(-2px);
+}
+
+.icon[b-i65gcuqq6n] {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.console-buttons[b-i65gcuqq6n] {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.power-btn[b-i65gcuqq6n] {
+    background-color: #ff0000;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+    transition: all 0.3s ease;
+}
+
+.power-btn:hover[b-i65gcuqq6n] {
+    transform: scale(1.1);
+}
+
+.power-icon[b-i65gcuqq6n] {
+    color: white;
+    font-size: 1.5rem;
+}
+
+/* Animación de encendido/apagado */
+@keyframes powerOn-b-i65gcuqq6n {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes powerOff-b-i65gcuqq6n {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.game-console[b-i65gcuqq6n] {
+    animation: powerOn-b-i65gcuqq6n 0.5s ease-in;
+}
+
+.game-console.power-off[b-i65gcuqq6n] {
+    animation: powerOff-b-i65gcuqq6n 0.5s ease-out;
+}

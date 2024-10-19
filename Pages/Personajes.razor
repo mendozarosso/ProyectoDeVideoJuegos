@@ -1,0 +1,84 @@
+@page "/personajes"
+@using Microsoft.EntityFrameworkCore
+@using ProyectoDeVideoJuegos.Data
+@inject AppDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>Personajes de Videojuegos</h3>
+
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="CrearNuevoPersonaje">Crear Nuevo Personaje</button>
+</div>
+
+@if (personajes == null)
+{
+    <p>Cargando...</p>
+}
+else if (!personajes.Any())
+{
+    <p>No hay personajes registrados.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Alias</th>
+                <th>Videojuego</th>
+                <th>Nivel de Poder</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var personaje in personajes)
+            {
+                <tr>
+                    <td>@personaje.Nombre</td>
+                    <td>@personaje.Alias</td>
+                    <td>@personaje.VideoJuego?.Nombre</td>
+                    <td>@personaje.NivelDePoder</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" @onclick="() => EditarPersonaje(personaje.Id)">Editar</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => EliminarPersonaje(personaje.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Personaje> personajes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarPersonajes();
+    }
+
+    private async Task CargarPersonajes()
+    {
+        personajes = await DbContext.Personajes.Include(p => p.VideoJuego).ToListAsync();
+    }
+
+    private void CrearNuevoPersonaje()
+    {
+        NavigationManager.NavigateTo("/gestion-personaje");
+    }
+
+    private void EditarPersonaje(int id)
+    {
+        NavigationManager.NavigateTo($"/gestion-personaje/{id}");
+    }
+
+    private async Task EliminarPersonaje(int id)
+    {
+        var personaje = await DbContext.Personajes.FindAsync(id);
+        if (personaje != null)
+        {
+            DbContext.Personajes.Remove(personaje);
+            await DbContext.SaveChangesAsync();
+            await CargarPersonajes();
+        }
+    }
+}

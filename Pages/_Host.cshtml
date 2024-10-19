@@ -1,0 +1,12 @@
+﻿@page "/"
+@namespace ProyectoDeVideoJuegos.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+}
+
+<component type="typeof(App)" render-mode="ServerPrerendered" />
+
+@section HeadContent {
+    <link href="css/global.css" rel="stylesheet" />
+}

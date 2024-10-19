@@ -1,0 +1,51 @@
+﻿@page "/"
+@inject NavigationManager NavigationManager
+
+<h1 class="text-center mb-4">Bienvenido a la Consola de Videojuegos</h1>
+
+<div class="row justify-content-center">
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Videojuegos</h5>
+                <p class="card-text">Explora y gestiona tu colección de videojuegos.</p>
+                <button class="btn btn-primary" @onclick="NavigateToVideoJuegos">Ver Videojuegos</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Personajes</h5>
+                <p class="card-text">Descubre y administra los personajes de tus juegos favoritos.</p>
+                <button class="btn btn-primary" @onclick="NavigateToPersonajes">Ver Personajes</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Plataformas</h5>
+                <p class="card-text">Gestiona las plataformas de videojuegos disponibles.</p>
+                <button class="btn btn-primary" @onclick="NavigateToPlataformas">Ver Plataformas</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void NavigateToVideoJuegos()
+    {
+        NavigationManager.NavigateTo("/videojuegos");
+    }
+
+    private void NavigateToPersonajes()
+    {
+        NavigationManager.NavigateTo("/personajes");
+    }
+
+    private void NavigateToPlataformas()
+    {
+        NavigationManager.NavigateTo("/plataformas");
+    }
+}

@@ -1,0 +1,98 @@
+@page "/registro-videojuego"
+@page "/registro-videojuego/{id:int}"
+@using Microsoft.EntityFrameworkCore
+@using ProyectoDeVideoJuegos.Data
+@inject AppDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>@(Id == null ? "Registrar" : "Editar") Videojuego</h3>
+
+<EditForm Model="@videojuego" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <InputText id="nombre" @bind-Value="videojuego.Nombre" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="desarrollador">Desarrollador:</label>
+        <InputText id="desarrollador" @bind-Value="videojuego.Desarrollador" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="plataforma">Plataforma:</label>
+        <InputSelect id="plataforma" @bind-Value="videojuego.PlataformaId" class="form-control">
+            @foreach (var plataforma in plataformas)
+            {
+                <option value="@plataforma.Id">@plataforma.Nombre</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="form-group">
+        <label for="genero">Género:</label>
+        <InputText id="genero" @bind-Value="videojuego.Genero" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="fechaLanzamiento">Fecha de Lanzamiento:</label>
+        <InputDate id="fechaLanzamiento" @bind-Value="videojuego.FechaLanzamiento" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="imagenPortada">URL de la Imagen de Portada:</label>
+        <InputText id="imagenPortada" @bind-Value="videojuego.ImagenPortada" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="descripcion">Descripción:</label>
+        <InputTextArea id="descripcion" @bind-Value="videojuego.Descripcion" class="form-control" rows="3" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private VideoJuego videojuego = new VideoJuego();
+    private List<Plataforma> plataformas = new List<Plataforma>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        plataformas = await DbContext.Plataformas.ToListAsync();
+
+        if (Id.HasValue)
+        {
+            var existingVideoJuego = await DbContext.VideoJuegos.FindAsync(Id.Value);
+            if (existingVideoJuego != null)
+            {
+                videojuego = existingVideoJuego;
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (Id.HasValue)
+        {
+            DbContext.Update(videojuego);
+        }
+        else
+        {
+            DbContext.VideoJuegos.Add(videojuego);
+        }
+
+        await DbContext.SaveChangesAsync();
+        NavigationManager.NavigateTo("/videojuegos");
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/videojuegos");
+    }
+}

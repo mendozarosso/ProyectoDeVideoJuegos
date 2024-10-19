@@ -1,0 +1,41 @@
+﻿@inject NavigationManager NavigationManager
+
+<div class="game-console">
+    <div class="console-screen">
+        <div class="console-header">
+            <h1 class="console-title">PS5</h1>
+        </div>
+        <nav class="console-menu">
+            <NavLink class="menu-item" href="" Match="NavLinkMatch.All">
+                <span class="icon">🏠</span> Incio
+            </NavLink>
+            <NavLink class="menu-item" href="videojuegos">
+                <span class="icon">🎮</span> Juegos
+            </NavLink>
+            <NavLink class="menu-item" href="personajes">
+                <span class="icon">👾</span> Personajes
+            </NavLink>
+            <NavLink class="menu-item" href="plataformas">
+                <span class="icon">🕹️</span> Plataformas
+            </NavLink>
+        </nav>
+    </div>
+    <div class="console-buttons">
+        <button class="power-btn" @onclick="TogglePower">
+            <span class="power-icon">⏻</span>
+        </button>
+    </div>
+</div>
+
+@code {
+    private bool isPoweredOn = true;
+
+    private void TogglePower()
+    {
+        isPoweredOn = !isPoweredOn;
+        if (!isPoweredOn)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

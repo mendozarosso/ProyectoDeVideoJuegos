@@ -1,0 +1,88 @@
+@page "/videojuegos"
+@using Microsoft.EntityFrameworkCore
+@using ProyectoDeVideoJuegos.Data
+@inject AppDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>Videojuegos</h3>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <button class="btn btn-primary" @onclick="NavigateToRegistro">Registrar Nuevo Videojuego</button>
+    </div>
+</div>
+
+@if (videojuegos == null)
+{
+    <p>Cargando...</p>
+}
+else if (!videojuegos.Any())
+{
+    <p>No hay videojuegos registrados.</p>
+}
+else
+{
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Desarrollador</th>
+                <th>Plataforma</th>
+                <th>Género</th>
+                <th>Fecha de Lanzamiento</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var juego in videojuegos)
+            {
+                <tr>
+                    <td>@juego.Nombre</td>
+                    <td>@juego.Desarrollador</td>
+                    <td>@juego.Plataforma.Nombre</td>
+                    <td>@juego.Genero</td>
+                    <td>@juego.FechaLanzamiento.ToShortDateString()</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" @onclick="() => NavigateToEditar(juego.Id)">Editar</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => EliminarVideoJuego(juego.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<VideoJuego> videojuegos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarVideoJuegos();
+    }
+
+    private async Task CargarVideoJuegos()
+    {
+        videojuegos = await DbContext.VideoJuegos.Include(v => v.Plataforma).ToListAsync();
+    }
+
+    private void NavigateToRegistro()
+    {
+        NavigationManager.NavigateTo("/registro-videojuego");
+    }
+
+    private void NavigateToEditar(int id)
+    {
+        NavigationManager.NavigateTo($"/registro-videojuego/{id}");
+    }
+
+    private async Task EliminarVideoJuego(int id)
+    {
+        var juego = await DbContext.VideoJuegos.FindAsync(id);
+        if (juego != null)
+        {
+            DbContext.VideoJuegos.Remove(juego);
+            await DbContext.SaveChangesAsync();
+            await CargarVideoJuegos();
+        }
+    }
+}

@@ -1,0 +1,80 @@
+@page "/plataformas"
+@using Microsoft.EntityFrameworkCore
+@using ProyectoDeVideoJuegos.Data
+@inject AppDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>Plataformas de Videojuegos</h3>
+
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="CrearNuevaPlataforma">Crear Nueva Plataforma</button>
+</div>
+
+@if (plataformas == null)
+{
+    <p>Cargando...</p>
+}
+else if (!plataformas.Any())
+{
+    <p>No hay plataformas registradas.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var plataforma in plataformas)
+            {
+                <tr>
+                    <td>@plataforma.Nombre</td>
+                    <td>@(plataforma.Estado ? "Activa" : "Inactiva")</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" @onclick="() => EditarPlataforma(plataforma.Id)">Editar</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => EliminarPlataforma(plataforma.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Plataforma> plataformas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarPlataformas();
+    }
+
+    private async Task CargarPlataformas()
+    {
+        plataformas = await DbContext.Plataformas.ToListAsync();
+    }
+
+    private void CrearNuevaPlataforma()
+    {
+        NavigationManager.NavigateTo("/gestion-plataforma");
+    }
+
+    private void EditarPlataforma(int id)
+    {
+        NavigationManager.NavigateTo($"/gestion-plataforma/{id}");
+    }
+
+    private async Task EliminarPlataforma(int id)
+    {
+        var plataforma = await DbContext.Plataformas.FindAsync(id);
+        if (plataforma != null)
+        {
+            DbContext.Plataformas.Remove(plataforma);
+            await DbContext.SaveChangesAsync();
+            await CargarPlataformas();
+        }
+    }
+}

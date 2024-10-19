@@ -1,0 +1,107 @@
+@page "/gestion-personaje"
+@page "/gestion-personaje/{id:int}"
+@using Microsoft.EntityFrameworkCore
+@using ProyectoDeVideoJuegos.Data
+@inject AppDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>@(Id == null ? "Crear" : "Editar") Personaje</h3>
+
+<EditForm Model="@personaje" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <InputText id="nombre" @bind-Value="personaje.Nombre" class="form-control" />
+        <ValidationMessage For="@(() => personaje.Nombre)" />
+    </div>
+
+    <div class="form-group">
+        <label for="alias">Alias:</label>
+        <InputText id="alias" @bind-Value="personaje.Alias" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="rolEnJuego">Rol en el Juego:</label>
+        <InputText id="rolEnJuego" @bind-Value="personaje.RolEnJuego" class="form-control" />
+        <ValidationMessage For="@(() => personaje.RolEnJuego)" />
+    </div>
+
+    <div class="form-group">
+        <label for="habilidadEspecial">Habilidad Especial:</label>
+        <InputText id="habilidadEspecial" @bind-Value="personaje.HabilidadEspecial" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="armaFavorita">Arma Favorita:</label>
+        <InputText id="armaFavorita" @bind-Value="personaje.ArmaFavorita" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="nivelDePoder">Nivel de Poder:</label>
+        <InputNumber id="nivelDePoder" @bind-Value="personaje.NivelDePoder" class="form-control" />
+        <ValidationMessage For="@(() => personaje.NivelDePoder)" />
+    </div>
+
+    <div class="form-group">
+        <label for="imagenPersonaje">URL de la Imagen del Personaje:</label>
+        <InputText id="imagenPersonaje" @bind-Value="personaje.ImagenPersonaje" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="videoJuego">Videojuego:</label>
+        <InputSelect id="videoJuego" @bind-Value="personaje.VideoJuegoId" class="form-control">
+            @foreach (var juego in videojuegos)
+            {
+                <option value="@juego.Id">@juego.Nombre</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => personaje.VideoJuegoId)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private Personaje personaje = new Personaje();
+    private List<VideoJuego> videojuegos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        videojuegos = await DbContext.VideoJuegos.ToListAsync();
+
+        if (Id.HasValue)
+        {
+            var existingPersonaje = await DbContext.Personajes.FindAsync(Id.Value);
+            if (existingPersonaje != null)
+            {
+                personaje = existingPersonaje;
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (Id.HasValue)
+        {
+            DbContext.Update(personaje);
+        }
+        else
+        {
+            DbContext.Personajes.Add(personaje);
+        }
+
+        await DbContext.SaveChangesAsync();
+        NavigationManager.NavigateTo("/personajes");
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/personajes");
+    }
+}

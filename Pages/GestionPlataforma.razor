@@ -1,0 +1,67 @@
+@page "/gestion-plataforma"
+@page "/gestion-plataforma/{id:int}"
+@using ProyectoDeVideoJuegos.Data
+@inject AppDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>@(Id == null ? "Crear" : "Editar") Plataforma</h3>
+
+<EditForm Model="@plataforma" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <InputText id="nombre" @bind-Value="plataforma.Nombre" class="form-control" />
+        <ValidationMessage For="@(() => plataforma.Nombre)" />
+    </div>
+
+    <div class="form-group">
+        <label>
+            <InputCheckbox @bind-Value="plataforma.Estado" />
+            Activa
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private Plataforma plataforma = new Plataforma();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            var existingPlataforma = await DbContext.Plataformas.FindAsync(Id.Value);
+            if (existingPlataforma != null)
+            {
+                plataforma = existingPlataforma;
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (Id.HasValue)
+        {
+            DbContext.Update(plataforma);
+        }
+        else
+        {
+            DbContext.Plataformas.Add(plataforma);
+        }
+
+        await DbContext.SaveChangesAsync();
+        NavigationManager.NavigateTo("/plataformas");
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/plataformas");
+    }
+}
